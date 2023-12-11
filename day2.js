@@ -1,3 +1,5 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable complexity */
 /*
 --- Day 2: Cube Conundrum ---
 You're launched high into the atmosphere! The apex of your trajectory just barely reaches the surface of a large island floating in the sky. You gently land in a fluffy pile of leaves. It's quite cold, but you don't see much snow. An Elf runs over to greet you.
@@ -93,18 +95,20 @@ For each game, find the minimum set of cubes that must have been present. What i
 const findValidGames2 = (str) => {
     const games = str.split('Game ').filter(e => e !== '');
     let total = 0;
+    // can you do this in one loop?
     for (let i = 0; i < games.length; i++) {
-        const [id, game] = games[i].split(':');
-        let maxColorVals = {
-            r: 0,
-            g: 0,
-            b: 0
-        };
+        const game = games[i].split(':')[1];
         let gameSetTotal = 1;
+        let maxColorVals = {
+            r: 1,
+            g: 1,
+            b: 1
+        };
 
-        for (let k = 3; k < game.length; k++) {
+        for (let k = 0; k < game.length; k++) {
             const gameVal = Number(game[k] + game[k + 1]) ? Number(game[k] + game[k + 1]) : Number(game[k]);
             let colorVal, color;
+
             if ( maxColorVals[game[k + 2]]) {
                 colorVal = maxColorVals[game[k + 2]];
                 color = game[k + 2];
@@ -113,15 +117,11 @@ const findValidGames2 = (str) => {
                 color = game[k + 3];
             }
 
-            if (gameVal && gameVal > colorVal) {
-                maxColorVals[color] = gameVal;
-            }
+            if (gameVal && gameVal > colorVal) maxColorVals[color] = gameVal;
         }
 
-        console.log(maxColorVals);
-
-        // eslint-disable-next-line guard-for-in
         for (const color in maxColorVals) gameSetTotal *= maxColorVals[color];
+
         total += gameSetTotal;
     }
 
