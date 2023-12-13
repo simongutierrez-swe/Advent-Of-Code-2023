@@ -31,11 +31,49 @@ Of course, the actual engine schematic is much larger. What is the sum of all of
 
 const fs = require('fs');
 const input = fs.readFileSync('../Inputs/input3.txt').toString();
-const test =
-'467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..\n';
+const test = '467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..';
+// up     down    left    right   upRight   upLeft  lowRight  lowLeft
+const directions = [[1, 0], [-1, 0], [0, -1], [0, 1], [-1, 1], [-1, -1], [1, 1], [1, -1]];
 
-const findValidSchematicPartNumbers = (schematic) => {
-    const matrixSchem = schematic.split(/\n/g).map(e => [e]);
+const findValidPart = (matrix, row, col) => {
+    for (const dir of directions) {
+        const [addRow, addCol] = dir;
+        if (matrix[row + addRow]) {
+            if (!Number(matrix[row + addRow][col + addCol]) && matrix[row + addRow][col + addCol] !== '.') {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
-console.log();
+const findValidSchematicPartNumbers = (schematic) => {
+
+    const matrixSchem = schematic.split(/\n/g);
+    let total = 0;
+
+    for (let row = 0; row < matrixSchem.length; row++) {
+        let currRow = matrixSchem[row], currNum = '', isValidPart = false;
+        for (let col = 0; col < currRow.length; col++) {
+            const currVal = matrixSchem[row][col];
+            if (Number(currVal)) {
+                currNum += currVal;
+                if (!isValidPart && !isValidPart) {
+                    isValidPart = findValidPart(matrixSchem, row, col);
+                }
+            } else if (!Number(currVal) && isValidPart) {
+                total += Number(currNum);
+                currNum = '';
+                isValidPart = false;
+            } else {
+                currNum = '';
+                isValidPart = false;
+            }
+        }
+    }
+
+    return total;
+ }
+
+console.log(findValidSchematicPartNumbers(input));
