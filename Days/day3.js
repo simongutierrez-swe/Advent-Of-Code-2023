@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /*
 --- Day 3: Gear Ratios ---
 You and the Elf eventually reach a gondola lift station; he says the gondola lift will take you up to the water source, but this is as far as he can bring you. You go inside.
@@ -30,32 +31,75 @@ Of course, the actual engine schematic is much larger. What is the sum of all of
 */
 
 const fs = require('fs');
-const { maxHeaderSize } = require('http');
-const { connected } = require('process');
-const input = fs.readFileSync('../Inputs/input3.txt').toString();
+const path = require('path');
+const input = fs.readFileSync(path.resolve('../Inputs/', 'input3.txt'), 'utf8').split('\n');
 const test = '467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..';
-// up     down    left    right   upRight   upLeft  lowRight  lowLeft
+                    // up     down    left    right   upRight   upLeft  lowRight  lowLeft
 const directions = [[1, 0], [-1, 0], [0, -1], [0, 1], [-1, 1], [-1, -1], [1, 1], [1, -1]];
 
-const findValidPart = (matrix, row, col) => {
-    for (const dir of directions) {
-        const [addRow, addCol] = dir;
-        if (matrix[row + addRow] !== undefined) {
-            const dirElem = matrix[row + addRow][col + addCol]
-            if (dirElem !== undefined) {
-                if (isNaN(dirElem) && dirElem !== '.') {
-                    return true;
-                }
+let result = 0;
+
+for (let i = 0; i < input.length; i++) {
+    const numbers = input[i].replace(/\./g, ' ');
+    for (const match of numbers.matchAll(/\d+/g)) {
+        console.log(match)
+        for (let j = match.index; j < match.index + match[0].length; j++) {
+            const surrounding = [
+                (input[i - 1] ?? '')[j - 1] ?? '.',
+                (input[i - 1] ?? '')[j] ?? '.',
+                (input[i - 1] ?? '')[j + 1] ?? '.',
+                (input[i] ?? '')[j - 1] ?? '.',
+                (input[i] ?? '')[j] ?? '.',
+                (input[i] ?? '')[j + 1] ?? '.',
+                (input[i + 1] ?? '')[j - 1] ?? '.',
+                (input[i + 1] ?? '')[j] ?? '.',
+                (input[i + 1] ?? '')[j + 1] ?? '.'
+            ];
+            if (surrounding.some(x => /[^0-9.]/.test(x))) {
+                result += parseInt(match[0]);
+                break;
             }
         }
     }
+}
 
-    return false;
+console.log(result);
+
+
+const findValidPart = (matrix, row, col) => {
+    const surrounding = [
+        (matrix[row - 1] ?? '')[col - 1] ?? '.',
+        (matrix[row - 1] ?? '')[col] ?? '.',
+        (matrix[row - 1] ?? '')[col + 1] ?? '.',
+        (matrix[row] ?? '')[col - 1] ?? '.',
+        (matrix[row] ?? '')[col] ?? '.',
+        (matrix[row] ?? '')[col + 1] ?? '.',
+        (matrix[row + 1] ?? '')[col - 1] ?? '.',
+        (matrix[row + 1] ?? '')[col] ?? '.',
+        (matrix[row + 1] ?? '')[col + 1] ?? '.'
+    ];
+
+    return surrounding.some(x => /[^0-9.]/.test(x));
+
+
+    // for (const dir of directions) {
+    //     const [addRow, addCol] = dir;
+    //     if (matrix[row + addRow] !== undefined) {
+    //         const dirElem = matrix[row + addRow][col + addCol]
+    //         if (dirElem !== undefined) {
+    //             if (isNaN(dirElem) && dirElem !== '.') {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // return false;
 }
 
 const findValidSchematicPartNumbers = (schematic) => {
 
-    let matrixSchem = schematic.split(/\n/g);
+    let matrixSchem = schematic;
     let total = 0;
 
     for (let row = 0; row < matrixSchem.length; row++) {
@@ -66,7 +110,6 @@ const findValidSchematicPartNumbers = (schematic) => {
                 currNum += currVal;
                 isValidPart = isValidPart ? isValidPart : findValidPart(matrixSchem, row, col);
             } else if (isNaN(currVal) && isValidPart) {
-                console.log(currNum)
                 total += Number(currNum);
                 currNum = '';
                 isValidPart = false;
@@ -80,4 +123,4 @@ const findValidSchematicPartNumbers = (schematic) => {
     return total;
 }
 
-console.log(findValidSchematicPartNumbers(input)); // 537066 too low
+console.log(findValidSchematicPartNumbers(input)); // 537066 too low, 540000 is too high
