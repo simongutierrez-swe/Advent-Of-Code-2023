@@ -42,7 +42,8 @@ let result = 0;
 for (let i = 0; i < input.length; i++) {
     const numbers = input[i].replace(/\./g, ' ');
     for (const match of numbers.matchAll(/\d+/g)) {
-        console.log(match)
+
+        // console.log('>>>>', match);
         for (let j = match.index; j < match.index + match[0].length; j++) {
             const surrounding = [
                 (input[i - 1] ?? '')[j - 1] ?? '.',
@@ -67,34 +68,15 @@ console.log(result);
 
 
 const findValidPart = (matrix, row, col) => {
-    const surrounding = [
-        (matrix[row - 1] ?? '')[col - 1] ?? '.',
-        (matrix[row - 1] ?? '')[col] ?? '.',
-        (matrix[row - 1] ?? '')[col + 1] ?? '.',
-        (matrix[row] ?? '')[col - 1] ?? '.',
-        (matrix[row] ?? '')[col] ?? '.',
-        (matrix[row] ?? '')[col + 1] ?? '.',
-        (matrix[row + 1] ?? '')[col - 1] ?? '.',
-        (matrix[row + 1] ?? '')[col] ?? '.',
-        (matrix[row + 1] ?? '')[col + 1] ?? '.'
-    ];
 
-    return surrounding.some(x => /[^0-9.]/.test(x));
+    for (const dir of directions) {
+        const [addRow, addCol] = dir;
+        const dirElem = (matrix[row + addRow] ?? '.')[col + addCol] ?? '.';
 
+        if (isNaN(dirElem) && dirElem !== '.') return true;
+    }
 
-    // for (const dir of directions) {
-    //     const [addRow, addCol] = dir;
-    //     if (matrix[row + addRow] !== undefined) {
-    //         const dirElem = matrix[row + addRow][col + addCol]
-    //         if (dirElem !== undefined) {
-    //             if (isNaN(dirElem) && dirElem !== '.') {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // return false;
+    return false;
 }
 
 const findValidSchematicPartNumbers = (schematic) => {
@@ -103,21 +85,33 @@ const findValidSchematicPartNumbers = (schematic) => {
     let total = 0;
 
     for (let row = 0; row < matrixSchem.length; row++) {
-        let currRow = matrixSchem[row], currNum = '', isValidPart = false;
-        for (let col = 0; col < currRow.length; col++) {
-            const currVal = matrixSchem[row][col];
-            if (!isNaN(currVal)) {
-                currNum += currVal;
-                isValidPart = isValidPart ? isValidPart : findValidPart(matrixSchem, row, col);
-            } else if (isNaN(currVal) && isValidPart) {
-                total += Number(currNum);
-                currNum = '';
-                isValidPart = false;
-            } else {
-                currNum = '';
-                isValidPart = false;
+        let isValidPart = false;
+        const currRow = matrixSchem[row].replace(/\./g, ' ');
+
+        for (const match of currRow.matchAll(/\d+/g)) {
+        //     // console.log('>>>>', match)
+        //     isValidPart = isValidPart ? isValidPart : findValidPart(matrixSchem, row, match.index);
+
+        //     total += isValidPart ? Number(match[0]) : 0;
+        for (let j = match.index; j < match.index + match[0].length; j++) {
+            const surrounding = [
+                (input[row - 1] ?? '')[j - 1] ?? '.',
+                (input[row - 1] ?? '')[j] ?? '.',
+                (input[row - 1] ?? '')[j + 1] ?? '.',
+                (input[row] ?? '')[j - 1] ?? '.',
+                (input[row] ?? '')[j] ?? '.',
+                (input[row] ?? '')[j + 1] ?? '.',
+                (input[row + 1] ?? '')[j - 1] ?? '.',
+                (input[row + 1] ?? '')[j] ?? '.',
+                (input[row + 1] ?? '')[j + 1] ?? '.'
+            ];
+            if (surrounding.some(x => /[^0-9.]/.test(x))) {
+                total += parseInt(match[0]);
+                break;
             }
         }
+        }
+
     }
 
     return total;
