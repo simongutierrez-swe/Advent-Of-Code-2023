@@ -34,82 +34,31 @@ const fs = require('fs');
 const path = require('path');
 const input = fs.readFileSync(path.resolve('../Inputs/', 'input3.txt'), 'utf8').split('\n');
 const test = '467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..';
-                    // up     down    left    right   upRight   upLeft  lowRight  lowLeft
-const directions = [[1, 0], [-1, 0], [0, -1], [0, 1], [-1, 1], [-1, -1], [1, 1], [1, -1]];
-
-let result = 0;
-
-for (let i = 0; i < input.length; i++) {
-    const numbers = input[i].replace(/\./g, ' ');
-    for (const match of numbers.matchAll(/\d+/g)) {
-
-        // console.log('>>>>', match);
-        for (let j = match.index; j < match.index + match[0].length; j++) {
-            const surrounding = [
-                (input[i - 1] ?? '')[j - 1] ?? '.',
-                (input[i - 1] ?? '')[j] ?? '.',
-                (input[i - 1] ?? '')[j + 1] ?? '.',
-                (input[i] ?? '')[j - 1] ?? '.',
-                (input[i] ?? '')[j] ?? '.',
-                (input[i] ?? '')[j + 1] ?? '.',
-                (input[i + 1] ?? '')[j - 1] ?? '.',
-                (input[i + 1] ?? '')[j] ?? '.',
-                (input[i + 1] ?? '')[j + 1] ?? '.'
-            ];
-            if (surrounding.some(x => /[^0-9.]/.test(x))) {
-                result += parseInt(match[0]);
-                break;
-            }
-        }
-    }
-}
-
-console.log(result);
-
-
-const findValidPart = (matrix, row, col) => {
-
-    for (const dir of directions) {
-        const [addRow, addCol] = dir;
-        const dirElem = (matrix[row + addRow] ?? '.')[col + addCol] ?? '.';
-
-        if (isNaN(dirElem) && dirElem !== '.') return true;
-    }
-
-    return false;
-}
 
 const findValidSchematicPartNumbers = (schematic) => {
-
-    let matrixSchem = schematic;
     let total = 0;
 
-    for (let row = 0; row < matrixSchem.length; row++) {
-        let isValidPart = false;
-        const currRow = matrixSchem[row].replace(/\./g, ' ');
+    for (let row = 0; row < schematic.length; row++) {
+        const currRow = schematic[row].replace(/\./g, ' ');
 
         for (const match of currRow.matchAll(/\d+/g)) {
-        //     // console.log('>>>>', match)
-        //     isValidPart = isValidPart ? isValidPart : findValidPart(matrixSchem, row, match.index);
-
-        //     total += isValidPart ? Number(match[0]) : 0;
-        for (let j = match.index; j < match.index + match[0].length; j++) {
-            const surrounding = [
-                (input[row - 1] ?? '')[j - 1] ?? '.',
-                (input[row - 1] ?? '')[j] ?? '.',
-                (input[row - 1] ?? '')[j + 1] ?? '.',
-                (input[row] ?? '')[j - 1] ?? '.',
-                (input[row] ?? '')[j] ?? '.',
-                (input[row] ?? '')[j + 1] ?? '.',
-                (input[row + 1] ?? '')[j - 1] ?? '.',
-                (input[row + 1] ?? '')[j] ?? '.',
-                (input[row + 1] ?? '')[j + 1] ?? '.'
-            ];
-            if (surrounding.some(x => /[^0-9.]/.test(x))) {
-                total += parseInt(match[0]);
-                break;
+            for (let j = match.index; j < match.index + match[0].length; j++) {
+                const surrounding = [
+                    (input[row - 1] ?? '')[j - 1] ?? '.',
+                    (input[row - 1] ?? '')[j] ?? '.',
+                    (input[row - 1] ?? '')[j + 1] ?? '.',
+                    (input[row] ?? '')[j - 1] ?? '.',
+                    (input[row] ?? '')[j] ?? '.',
+                    (input[row] ?? '')[j + 1] ?? '.',
+                    (input[row + 1] ?? '')[j - 1] ?? '.',
+                    (input[row + 1] ?? '')[j] ?? '.',
+                    (input[row + 1] ?? '')[j + 1] ?? '.'
+                ];
+                if (surrounding.some(x => /[^0-9.]/.test(x))) {
+                    total += parseInt(match[0]);
+                    break;
+                }
             }
-        }
         }
 
     }
@@ -117,4 +66,4 @@ const findValidSchematicPartNumbers = (schematic) => {
     return total;
 }
 
-console.log(findValidSchematicPartNumbers(input)); // 537066 too low, 540000 is too high
+console.log(findValidSchematicPartNumbers(input)); // 538046
