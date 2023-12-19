@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable complexity */
 /*
 --- Day 3: Gear Ratios ---
@@ -33,7 +34,7 @@ Of course, the actual engine schematic is much larger. What is the sum of all of
 const fs = require('fs');
 const path = require('path');
 const input = fs.readFileSync(path.resolve('../Inputs/', 'input3.txt'), 'utf8').split('\n');
-const test = '467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..';
+const test = '467..114..\n...*......\n..35..633.\n......#...\n617*......\n.....+.58.\n..592.....\n......755.\n...$.*....\n.664.598..'.split('\n');
 
 const findValidSchematicPartNumbers = (schematic) => {
     let total = 0;
@@ -55,7 +56,7 @@ const findValidSchematicPartNumbers = (schematic) => {
                     (input[row + 1] ?? '')[j + 1] ?? '.'
                 ];
                 if (surrounding.some(x => /[^0-9.]/.test(x))) {
-                    total += parseInt(match[0]);
+                    total += Number(match[0]);
                     break;
                 }
             }
@@ -66,7 +67,7 @@ const findValidSchematicPartNumbers = (schematic) => {
     return total;
 }
 
-console.log(findValidSchematicPartNumbers(input)); // 538046
+// console.log(findValidSchematicPartNumbers(input)); // 538046
 
 
 /*
@@ -103,28 +104,35 @@ const findValidSchematicPartNumbers2 = (schematic) => {
 
     for (let row = 0; row < schematic.length; row++) {
         const currRow = schematic[row].replace(/\./g, ' ');
+        for (const match of currRow.matchAll(/\*/g)) {
+            let j = match.index;
+            let temp = 1, count = 0;
+            const surrounding = [
+                (input[row - 1] ?? '')[j - 1] ?? '.',
+                (input[row - 1] ?? '')[j] ?? '.',
+                (input[row - 1] ?? '')[j + 1] ?? '.',
+                (input[row] ?? '')[j - 1] ?? '.',
+                (input[row] ?? '')[j] ?? '.',
+                (input[row] ?? '')[j + 1] ?? '.',
+                (input[row + 1] ?? '')[j - 1] ?? '.',
+                (input[row + 1] ?? '')[j] ?? '.',
+                (input[row + 1] ?? '')[j + 1] ?? '.'
+            ];
 
-        for (const match of currRow.matchAll(/\d+/g)) {
-            for (let j = match.index; j < match.index + match[0].length; j++) {
-                const surrounding = [
-                    (input[row - 1] ?? '')[j - 1] ?? '.',
-                    (input[row - 1] ?? '')[j] ?? '.',
-                    (input[row - 1] ?? '')[j + 1] ?? '.',
-                    (input[row] ?? '')[j - 1] ?? '.',
-                    (input[row] ?? '')[j] ?? '.',
-                    (input[row] ?? '')[j + 1] ?? '.',
-                    (input[row + 1] ?? '')[j - 1] ?? '.',
-                    (input[row + 1] ?? '')[j] ?? '.',
-                    (input[row + 1] ?? '')[j + 1] ?? '.'
-                ];
-                if (surrounding.some(x => /[^0-9.]/.test(x))) {
-                    total += parseInt(match[0]);
-                    break;
+            surrounding.forEach(x => {
+                console.log(x, /[0-9]/.test(x));
+                if (/[0-9]/.test(x)) {
+                    temp *= Number(x);
+                    count++;
                 }
-            }
-        }
+            });
 
+            total += count >= 2 ? temp : 0;
+
+        }
     }
 
     return total;
 }
+
+console.log(findValidSchematicPartNumbers2(test)); // youre not getting the whole numbers just the single digit one thats adj
