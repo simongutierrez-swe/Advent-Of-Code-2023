@@ -99,6 +99,27 @@ In this schematic, there are two gears. The first is in the top left; it has par
 What is the sum of all of the gear ratios in your engine schematic?
 */
 
+const findNum = (schem, row, col) => {
+    let currCol = col;
+    let result = schem[row][currCol];
+
+    while (/[0-9]/.test(schem[row][currCol + 1] ?? '')) {
+        result = result + schem[row][currCol + 1];
+        currCol++;
+    }
+
+    currCol = col; // reset
+
+    while (/[0-9]/.test(schem[row][currCol - 1] ?? '')) {
+        result = schem[row][currCol - 1] + result;
+        currCol--;
+    }
+
+    return result;
+}
+
+// console.log(findNum(test, 9, 5));
+
 const findValidSchematicPartNumbers2 = (schematic) => {
     let total = 0;
 
@@ -108,21 +129,37 @@ const findValidSchematicPartNumbers2 = (schematic) => {
             let j = match.index;
             let temp = 1, count = 0;
             const surrounding = [
-                (input[row - 1] ?? '')[j - 1] ?? '.',
-                (input[row - 1] ?? '')[j] ?? '.',
-                (input[row - 1] ?? '')[j + 1] ?? '.',
-                (input[row] ?? '')[j - 1] ?? '.',
-                (input[row] ?? '')[j] ?? '.',
-                (input[row] ?? '')[j + 1] ?? '.',
-                (input[row + 1] ?? '')[j - 1] ?? '.',
-                (input[row + 1] ?? '')[j] ?? '.',
-                (input[row + 1] ?? '')[j + 1] ?? '.'
+                (schematic[row - 1] ?? '')[j - 1] ?? '.',
+                (schematic[row - 1] ?? '')[j] ?? '.',
+                (schematic[row - 1] ?? '')[j + 1] ?? '.',
+                (schematic[row] ?? '')[j - 1] ?? '.',
+                (schematic[row] ?? '')[j] ?? '.',
+                (schematic[row] ?? '')[j + 1] ?? '.',
+                (schematic[row + 1] ?? '')[j - 1] ?? '.',
+                (schematic[row + 1] ?? '')[j] ?? '.',
+                (schematic[row + 1] ?? '')[j + 1] ?? '.'
             ];
 
-            surrounding.forEach(x => {
-                console.log(x, /[0-9]/.test(x));
+            const surroundingPoints = [
+                [row - 1, j - 1],
+                [row - 1, j],
+                [row - 1, j + 1],
+                [row, j - 1],
+                [row, j],
+                [row, j + 1],
+                [row + 1, j - 1],
+                [row + 1, j],
+                [row + 1, j + 1],
+
+            ]
+
+            surrounding.forEach((x, idx) => {
+                // console.log(x, /[0-9]/.test(x), idx);
                 if (/[0-9]/.test(x)) {
-                    temp *= Number(x);
+                    const [surrRow, surrCol] = surroundingPoints[idx];
+                    // find a way to not recount a number
+                    console.log(findNum(schematic, surrRow, surrCol));
+                    temp *= Number(findNum(schematic, surrRow, surrCol));
                     count++;
                 }
             });
@@ -135,4 +172,4 @@ const findValidSchematicPartNumbers2 = (schematic) => {
     return total;
 }
 
-console.log(findValidSchematicPartNumbers2(test)); // youre not getting the whole numbers just the single digit one thats adj
+console.log(findValidSchematicPartNumbers2(test)); //
