@@ -121,55 +121,72 @@ const findNum = (schem, row, col) => {
 // console.log(findNum(test, 9, 5));
 
 const findValidSchematicPartNumbers2 = (schematic) => {
-    let total = 0;
+    const resultArray = [];
+    const numberIndices = [];
 
     for (let row = 0; row < schematic.length; row++) {
         const currRow = schematic[row].replace(/\./g, ' ');
         for (const match of currRow.matchAll(/\*/g)) {
-            let j = match.index;
-            let temp = 1, count = 0;
-            const surrounding = [
-                (schematic[row - 1] ?? '')[j - 1] ?? '.',
-                (schematic[row - 1] ?? '')[j] ?? '.',
-                (schematic[row - 1] ?? '')[j + 1] ?? '.',
-                (schematic[row] ?? '')[j - 1] ?? '.',
-                (schematic[row] ?? '')[j] ?? '.',
-                (schematic[row] ?? '')[j + 1] ?? '.',
-                (schematic[row + 1] ?? '')[j - 1] ?? '.',
-                (schematic[row + 1] ?? '')[j] ?? '.',
-                (schematic[row + 1] ?? '')[j + 1] ?? '.'
-            ];
+            for (let j = match.index; j < match.index + match[0].length; j++) {
+                const surrounding = [
+                    (schematic[row - 1] ?? '')[j - 1] ?? '.',
+                    (schematic[row - 1] ?? '')[j] ?? '.',
+                    (schematic[row - 1] ?? '')[j + 1] ?? '.',
+                    (schematic[row] ?? '')[j - 1] ?? '.',
+                    (schematic[row] ?? '')[j] ?? '.',
+                    (schematic[row] ?? '')[j + 1] ?? '.',
+                    (schematic[row + 1] ?? '')[j - 1] ?? '.',
+                    (schematic[row + 1] ?? '')[j] ?? '.',
+                    (schematic[row + 1] ?? '')[j + 1] ?? '.'
+                ];
 
-            const surroundingPoints = [
-                [row - 1, j - 1],
-                [row - 1, j],
-                [row - 1, j + 1],
-                [row, j - 1],
-                [row, j],
-                [row, j + 1],
-                [row + 1, j - 1],
-                [row + 1, j],
-                [row + 1, j + 1],
+                const surroundingPoints = [
+                    [row - 1, j - 1],
+                    [row - 1, j],
+                    [row - 1, j + 1],
+                    [row, j - 1],
+                    [row, j],
+                    [row, j + 1],
+                    [row + 1, j - 1],
+                    [row + 1, j],
+                    [row + 1, j + 1],
+                ];
 
-            ]
-
-            surrounding.forEach((x, idx) => {
-                // console.log(x, /[0-9]/.test(x), idx);
-                if (/[0-9]/.test(x)) {
-                    const [surrRow, surrCol] = surroundingPoints[idx];
-                    // find a way to not recount a number
-                    console.log(findNum(schematic, surrRow, surrCol));
-                    temp *= Number(findNum(schematic, surrRow, surrCol));
-                    count++;
+                // surrounding.forEach((x, idx) => {
+                    // console.log(x, /[0-9]/.test(x), idx);
+                    // if (/\d/.test(x)) {
+                    //     const [surrRow, surrCol] = surroundingPoints[idx];
+                    //     let result = findNum(schematic, surrRow, surrCol);
+                    //     temp *= seen[result] ? 1 : Number(result);
+                    //     seen[result] = 1;
+                    //     count++;
+                    // }
+                // });
+                const localNumberIndices = [];
+                for (let k = 0; k < surrounding.length; k++) {
+                    if ((/\d/.test(surrounding[k]) && (!/\d/.test(surrounding[k - 1] ?? '') || k % 3 === 0))) localNumberIndices.push(surroundingPoints[k]);
                 }
-            });
 
-            total += count >= 2 ? temp : 0;
-
+                if (localNumberIndices.length === 2) numberIndices.push(...localNumberIndices);
+            }
+            // total += count >= 2 ? temp : 0;
         }
     }
 
-    return total;
+    for (const index of numberIndices) {
+        const [i, j] = index;
+        const line = input[i];
+        const num = ['', '', '', line[j], '', '', ''];
+        if (/\d/.test(line[j - 1] ?? '')) num[2] = line[j - 1];
+        if (num[2] !== '' && /\d/.test(line[j - 2] ?? '')) num[1] = line[j - 2];
+        if (num[1] !== '' && /\d/.test(line[j - 3] ?? '')) num[0] = line[j - 3];
+        if (/\d/.test(line[j + 1] ?? '')) num[4] = line[j + 1];
+        if (num[4] !== '' && /\d/.test(line[j + 2] ?? '')) num[5] = line[j + 2];
+        if (num[5] !== '' && /\d/.test(line[j + 3] ?? '')) num[6] = line[j + 3];
+        resultArray.push(num.join(''));
+    }
+
+    return resultArray.reduce((a, x, i, r) => a + (i % 2 === 0 ? parseInt(x) * parseInt(r[i + 1]) : 0), 0);
 }
 
-console.log(findValidSchematicPartNumbers2(test)); //
+console.log(findValidSchematicPartNumbers2(input)); // 81709807
