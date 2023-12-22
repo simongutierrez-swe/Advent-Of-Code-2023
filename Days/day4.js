@@ -34,6 +34,7 @@ So, in this example, the Elf's pile of scratchcards is worth 13 points.
 Take a seat in the large pile of colorful cards. How many points are they worth in total?
 */
 
+const { match } = require('assert');
 const fs = require('fs');
 const path = require('path');
 const input = fs.readFileSync(path.resolve('../Inputs/', 'input4.txt'), 'utf8').split('\n').filter(e => e !== '');
@@ -64,7 +65,7 @@ const findValidScratchCards = (cards) => {
     return total;
 }
 
-console.log(findValidScratchCards(input));
+console.log(findValidScratchCards(input)); // 32001
 
 /*
 --- Part Two ---
@@ -99,16 +100,19 @@ Process all of the original and copied scratchcards until no more scratchcards a
 
 
 const findValidScratchCards2 = (cards) => {
-    let total = 0;
+    let score = {};
+
+    for (let k = 0; k < cards.length; k++) score[k + 1] = 1;
+
     for (let i = 0; i < cards.length; i++) {
         let [winningNums, yourNums] = cards[i].split(': ')[1].split(' | ');
         winningNums = winningNums.split(' ').filter(e => e !== '');
-        yourNums = yourNums.split(' ').filter(e => winningNums.includes(e));
+        let matches = yourNums.split(' ').filter(e => winningNums.includes(e));
 
-        total += findPoints(yourNums.length);
+        for (let j = 1; j <= matches.length; j++) score[i + 1 + j] += score[i + 1];
     }
 
-    return total;
+    return Object.values(score).reduce((a, b) => a + b, 0);
 }
 
-// console.log(findValidScratchCards2(test));
+console.log(findValidScratchCards2(input)); // 5037841
