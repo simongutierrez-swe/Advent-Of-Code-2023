@@ -94,3 +94,7 @@ So, the lowest location number in this example is 35.
 
 What is the lowest location number that corresponds to any of the initial seed numbers?
 */
+
+const findLowestLocation = (almanac) => {
+// find the lowest ocation according to the formula stated above
+}
