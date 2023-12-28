@@ -97,5 +97,5 @@ What is the lowest location number that corresponds to any of the initial seed n
 
 const findLowestLocation = (almanac) => {
 // find the lowest ocation according to the formula stated above
-// I really need to understand this one
+// What counts as a valid map? multiple lines on each section but what do they mean?
 }
