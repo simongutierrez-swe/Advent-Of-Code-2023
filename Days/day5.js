@@ -95,7 +95,18 @@ So, the lowest location number in this example is 35.
 What is the lowest location number that corresponds to any of the initial seed numbers?
 */
 
+const fs = require('fs');
+const path = require('path');
+const input = fs.readFileSync(path.resolve('../Inputs/', 'input5.txt'), 'utf8').split('\n').filter(e => e !== '');
+
+const test = 'seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil-to-fertilizer map:\n0 15 37\n37 52 2\n39 0 15\n\nfertilizer-to-water map:\n49 53 8\n0 11 42\n42 0 7\n57 7 4\n\nwater-to-light map:\n88 18 7\n18 25 70\n\nlight-to-temperature map:\n45 77 23\n81 45 19\n68 64 13\n\ntemperature-to-humidity map:\n0 69 1\n1 0 69\n\nhumidity-to-location map:\n60 56 37\n56 93 4'.split('\n').filter(e => e !== '');
+
 const findLowestLocation = (almanac) => {
-// find the lowest ocation according to the formula stated above
-// What counts as a valid map? multiple lines on each section but what do they mean?
+    let result = almanac[0].split(': ')[1].split(' ');
+    //      [0]                     [2]            [1]
+    // if source <= currSource < source + length - 1 then dest + (currSource - cource)
+
+    return result;
 }
+
+console.log(findLowestLocation(test));

@@ -34,7 +34,6 @@ So, in this example, the Elf's pile of scratchcards is worth 13 points.
 Take a seat in the large pile of colorful cards. How many points are they worth in total?
 */
 
-const { match } = require('assert');
 const fs = require('fs');
 const path = require('path');
 const input = fs.readFileSync(path.resolve('../Inputs/', 'input4.txt'), 'utf8').split('\n').filter(e => e !== '');
