@@ -103,6 +103,14 @@ const test = 'seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil
 
 const findLowestLocation = (almanac) => {
     let result = almanac[0].split(': ')[1].split(' ');
+
+    for (let i = 2; i < almanac.lengthl; i++) {
+        if (/[^0-9.]/.test(almanac[i][0])) {
+            let [src, dest, len] = almanac[i].split(': ')[1].split(' ');
+            // find what sources map now
+            // edge case what if it maps twice?
+        }
+    }
     // split to get map name, source, destination, length
     // then find its mapping, change result array to new mapping, then concinue to next mapping
     //      [0]                     [2]            [1]
