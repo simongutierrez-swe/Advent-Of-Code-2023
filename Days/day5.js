@@ -102,20 +102,23 @@ const input = fs.readFileSync(path.resolve('../Inputs/', 'input5.txt'), 'utf8').
 const test = 'seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil-to-fertilizer map:\n0 15 37\n37 52 2\n39 0 15\n\nfertilizer-to-water map:\n49 53 8\n0 11 42\n42 0 7\n57 7 4\n\nwater-to-light map:\n88 18 7\n18 25 70\n\nlight-to-temperature map:\n45 77 23\n81 45 19\n68 64 13\n\ntemperature-to-humidity map:\n0 69 1\n1 0 69\n\nhumidity-to-location map:\n60 56 37\n56 93 4'.split('\n').filter(e => e !== '');
 
 const findMap = (ranges = [], currMaps = []) => {
-    const [src, dest, len] = ranges.map(e => Number(e));
+    let result = [];
+    const [dest, src, len] = ranges.map(e => Number(e));
     currMaps = currMaps.map(e => Number(e));
 
     for (let i = 0; i < currMaps.length; i++) {
-        if (src <= currMaps[i] && currMaps[i] < src + len - 1) {
-            console.log(currMaps[i])
-            currMaps[i] = dest + currMaps[i] - src;
+        if (src <= currMaps[i] && currMaps[i] <= src + len - 1) {
+            // console.log(currMaps[i], src, dest, dest + currMaps[i] - src)
+            result.push(dest + currMaps[i] - src);
+        } else {
+            result.push(currMaps[i]);
         }
     }
-
-    return currMaps;
+    console.log(result)
+    return result;
 }
 
-console.log(findMap(['50', '98', '2'], [ '79', '14', '55', '13' ]))
+// console.log(findMap(['52', '50', '48'], [ '79', '14', '55', '13' ]))
 
 const findLowestLocation = (almanac) => {
     let result = almanac[0].split(': ')[1].split(' ');
@@ -123,11 +126,8 @@ const findLowestLocation = (almanac) => {
     for (let i = 2; i < almanac.length; i++) {
         if (/[0-9]/.test(almanac[i][0])) {
             const ranges = almanac[i].split(' ');
-            console.log(src, dest, len)
-            // find what sources map now
-            // edge case what if it maps twice?
-        } else {
-           // reset
+            result = findMap(ranges, result);
+            // things are being double counted for, a map should only map once
         }
     }
     // split to get map name, source, destination, length
@@ -135,7 +135,7 @@ const findLowestLocation = (almanac) => {
     //      [0]                     [2]            [1]
     // if source <= currSource < source + length - 1 then dest + (currSource - cource)
 
-    // return result;
+    return result;
 }
 
-// console.log(findLowestLocation(test));
+console.log(findLowestLocation(test));
