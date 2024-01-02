@@ -107,10 +107,10 @@ const findMap = (ranges, currMaps, counted) => {
     currMaps = currMaps.map(e => Number(e));
 
     for (let i = 0; i < currMaps.length; i++) {
-        if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[currMaps[i]]) {
+        if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[i]) {
             // console.log(currMaps[i], src, dest, dest + currMaps[i] - src)
             result.push(dest + currMaps[i] - src);
-            counted[dest + currMaps[i] - src] = 1;
+            counted[i] = 1;
         } else {
             result.push(currMaps[i]);
         }
@@ -122,7 +122,7 @@ const findMap = (ranges, currMaps, counted) => {
 
 const findLowestLocation = (almanac) => {
     let result = almanac[0].split(': ')[1].split(' ');
-    let counted = [];
+    let counted = {};
 
     for (let i = 2; i < almanac.length; i++) {
         if (/[0-9]/.test(almanac[i][0])) {
@@ -137,7 +137,7 @@ const findLowestLocation = (almanac) => {
     //      [0]                     [2]            [1]
     // if source <= currSource < source + length - 1 then dest + (currSource - cource)
 
-    return result;
+    return Math.min(...result);
 }
 
-console.log(findLowestLocation(test));
+console.log(findLowestLocation(input));
