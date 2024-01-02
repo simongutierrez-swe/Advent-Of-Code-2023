@@ -101,20 +101,20 @@ const input = fs.readFileSync(path.resolve('../Inputs/', 'input5.txt'), 'utf8').
 
 const test = 'seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil-to-fertilizer map:\n0 15 37\n37 52 2\n39 0 15\n\nfertilizer-to-water map:\n49 53 8\n0 11 42\n42 0 7\n57 7 4\n\nwater-to-light map:\n88 18 7\n18 25 70\n\nlight-to-temperature map:\n45 77 23\n81 45 19\n68 64 13\n\ntemperature-to-humidity map:\n0 69 1\n1 0 69\n\nhumidity-to-location map:\n60 56 37\n56 93 4'.split('\n').filter(e => e !== '');
 
-const findMap = (ranges = [], currMaps = []) => {
+const findMap = (ranges, currMaps, counted) => {
     let result = [];
     const [dest, src, len] = ranges.map(e => Number(e));
     currMaps = currMaps.map(e => Number(e));
 
     for (let i = 0; i < currMaps.length; i++) {
-        if (src <= currMaps[i] && currMaps[i] <= src + len - 1) {
+        if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[currMaps[i]]) {
             // console.log(currMaps[i], src, dest, dest + currMaps[i] - src)
             result.push(dest + currMaps[i] - src);
+            counted[dest + currMaps[i] - src] = 1;
         } else {
             result.push(currMaps[i]);
         }
     }
-    console.log(result)
     return result;
 }
 
@@ -122,12 +122,14 @@ const findMap = (ranges = [], currMaps = []) => {
 
 const findLowestLocation = (almanac) => {
     let result = almanac[0].split(': ')[1].split(' ');
+    let counted = [];
 
     for (let i = 2; i < almanac.length; i++) {
         if (/[0-9]/.test(almanac[i][0])) {
             const ranges = almanac[i].split(' ');
-            result = findMap(ranges, result);
-            // things are being double counted for, a map should only map once
+            result = findMap(ranges, result, counted);
+        } else {
+            counted = [];
         }
     }
     // split to get map name, source, destination, length
