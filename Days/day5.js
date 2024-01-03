@@ -104,11 +104,9 @@ const test = 'seeds: 79 14 55 13\n\nseed-to-soil map:\n50 98 2\n52 50 48\n\nsoil
 const findMap = (ranges, currMaps, counted) => {
     let result = [];
     const [dest, src, len] = ranges.map(e => Number(e));
-    currMaps = currMaps.map(e => Number(e));
 
     for (let i = 0; i < currMaps.length; i++) {
         if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[i]) {
-            // console.log(currMaps[i], src, dest, dest + currMaps[i] - src)
             result.push(dest + currMaps[i] - src);
             counted[i] = 1;
         } else {
@@ -121,7 +119,7 @@ const findMap = (ranges, currMaps, counted) => {
 // console.log(findMap(['52', '50', '48'], [ '79', '14', '55', '13' ]))
 
 const findLowestLocation = (almanac) => {
-    let result = almanac[0].split(': ')[1].split(' ');
+    let result = almanac[0].split(': ')[1].split(' ').map(e => Number(e));
     let counted = {};
 
     for (let i = 2; i < almanac.length; i++) {
@@ -134,10 +132,64 @@ const findLowestLocation = (almanac) => {
     }
     // split to get map name, source, destination, length
     // then find its mapping, change result array to new mapping, then concinue to next mapping
-    //      [0]                     [2]            [1]
+    //      [0] - Dest                    [2] - Source            [1] - Len
     // if source <= currSource < source + length - 1 then dest + (currSource - cource)
 
     return Math.min(...result);
 }
 
-console.log(findLowestLocation(input));
+// console.log(findLowestLocation(input)); // 551761867
+
+/*
+--- Part Two ---
+Everyone will starve if you only plant such a small number of seeds. Re-reading the almanac, it looks like the seeds: line actually describes ranges of seed numbers.
+
+The values on the initial seeds: line come in pairs. Within each pair, the first value is the start of the range and the second value is the length of the range. So, in the first line of the example above:
+
+seeds: 79 14 55 13
+This line describes two ranges of seed numbers to be planted in the garden. The first range starts with seed number 79 and contains 14 values: 79, 80, ..., 91, 92. The second range starts with seed number 55 and contains 13 values: 55, 56, ..., 66, 67.
+
+Now, rather than considering four seed numbers, you need to consider a total of 27 seed numbers.
+
+In the above example, the lowest location number can be obtained from seed number 82, which corresponds to soil 84, fertilizer 84, water 84, light 77, temperature 45, humidity 46, and location 46. So, the lowest location number is 46.
+
+Consider all of the initial seed numbers listed in the ranges on the first line of the almanac. What is the lowest location number that corresponds to any of the initial seed numbers?
+*/
+
+const getSeeds = (seedRanges) => {
+    let seeds = new Map();
+    // find a way to do this more optimal, maybe just look for ranges?
+
+    for (let i = 0; i < seedRanges.length; i += 2) {
+        let start = seedRanges[i];
+        let end = start + seedRanges[i + 1];
+
+        while (start < end) {
+            seeds.add(start)
+            start++;
+        }
+    }
+
+    return seeds;
+}
+
+// console.log(getSeeds([79, 14, 55, 13]))
+
+const findLowestLocation2 = (almanac) => {
+    let result = almanac[0].split(': ')[1].split(' ').map(e => Number(e));
+    result = getSeeds(result);
+    let counted = {};
+
+    // for (let i = 2; i < almanac.length; i++) {
+    //     if (/[0-9]/.test(almanac[i][0])) {
+    //         const ranges = almanac[i].split(' ');
+    //         result = findMap(ranges, result, counted);
+    //     } else {
+    //         counted = [];
+    //     }
+    // }
+
+    return Math.min(...result);
+}
+
+console.log(findLowestLocation2(input)); //
