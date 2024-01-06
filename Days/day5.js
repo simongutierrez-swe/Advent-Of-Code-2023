@@ -180,16 +180,16 @@ const findLowestLocation2 = (almanac) => {
     result = getSeeds(result);
     let counted = {};
 
-    // for (let i = 2; i < almanac.length; i++) {
-    //     if (/[0-9]/.test(almanac[i][0])) {
-    //         const ranges = almanac[i].split(' ');
-    //         result = findMap(ranges, result, counted);
-    //     } else {
-    //         counted = [];
-    //     }
-    // }
+    for (let i = 2; i < almanac.length; i++) {
+        if (/[0-9]/.test(almanac[i][0])) {
+            const ranges = almanac[i].split(' ');
+            result = findMap(ranges, result, counted);
+        } else {
+            counted = [];
+        }
+    }
 
     return Math.min(...result);
 }
 
-console.log(findLowestLocation2(input)); //
+// console.log(findLowestLocation2(input)); //
