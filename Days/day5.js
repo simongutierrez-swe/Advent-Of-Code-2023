@@ -113,6 +113,7 @@ const findMap = (ranges, currMaps, counted) => {
             result.push(currMaps[i]);
         }
     }
+
     return result;
 }
 
@@ -156,24 +157,45 @@ In the above example, the lowest location number can be obtained from seed numbe
 Consider all of the initial seed numbers listed in the ranges on the first line of the almanac. What is the lowest location number that corresponds to any of the initial seed numbers?
 */
 
-const getSeeds = (seedRanges) => {
-    let seeds = new Map();
+const getSeeds = (seeds) => {
+    let seedRanges = [];
     // find a way to do this more optimal, maybe just look for ranges?
 
-    for (let i = 0; i < seedRanges.length; i += 2) {
-        let start = seedRanges[i];
-        let end = start + seedRanges[i + 1];
+    for (let i = 0; i < seeds.length; i += 2) {
+        let start = seeds[i], end = start + seeds[i + 1] - 1;
+        seedRanges.push([start, end]);
+    }
 
-        while (start < end) {
-            seeds.add(start)
-            start++;
+    return seedRanges;
+}
+
+console.log(getSeeds([79, 14, 55, 13]))
+
+const findMap2 = (ranges, currMaps, counted) => {
+    let result = [];
+    const [dest, src, len] = ranges.map(e => Number(e));
+
+    for (let i = 0; i < currMaps.length; i++) {
+        /*
+            1. find if seeds range fits in src range
+                if yes -> calc new range then calc dest range
+                if no -> keep original seed range
+
+            * End goal, have an array of ranges and find the min of all the reanges then find the min of those numbers;
+        */
+
+        if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[i]) {
+            result.push(dest + currMaps[i] - src);
+            counted[i] = 1;
+        } else {
+            result.push(currMaps[i]);
         }
     }
 
-    return seeds;
+    return result;
 }
 
-// console.log(getSeeds([79, 14, 55, 13]))
+// console.log(findMap(['52', '50', '48'], [ '79', '14', '55', '13' ]))
 
 const findLowestLocation2 = (almanac) => {
     let result = almanac[0].split(': ')[1].split(' ').map(e => Number(e));
