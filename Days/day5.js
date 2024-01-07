@@ -157,9 +157,8 @@ In the above example, the lowest location number can be obtained from seed numbe
 Consider all of the initial seed numbers listed in the ranges on the first line of the almanac. What is the lowest location number that corresponds to any of the initial seed numbers?
 */
 
-const getSeeds = (seeds) => {
+const getSeedRanges = (seeds) => {
     let seedRanges = [];
-    // find a way to do this more optimal, maybe just look for ranges?
 
     for (let i = 0; i < seeds.length; i += 2) {
         let start = seeds[i], end = start + seeds[i + 1] - 1;
@@ -169,11 +168,11 @@ const getSeeds = (seeds) => {
     return seedRanges;
 }
 
-console.log(getSeeds([79, 14, 55, 13]))
+console.log(getSeedRanges([79, 14, 55, 13]))
 
-const findMap2 = (ranges, currMaps, counted) => {
+const findMap2 = (range, currMaps, counted) => {
     let result = [];
-    const [dest, src, len] = ranges.map(e => Number(e));
+    const [dest, src, len] = range.map(e => Number(e));
 
     for (let i = 0; i < currMaps.length; i++) {
         /*
@@ -181,15 +180,27 @@ const findMap2 = (ranges, currMaps, counted) => {
                 if yes -> calc new range then calc dest range
                 if no -> keep original seed range
 
-            * End goal, have an array of ranges and find the min of all the reanges then find the min of those numbers;
+            * End goal, have an array of ranges, find the min of all the ranges then find the min of those numbers;
         */
+        const [start, end] = currMaps[i];
+        const [srcStart, srcEnd] = [src, src + len - 1];
 
-        if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[i]) {
-            result.push(dest + currMaps[i] - src);
+        if (end >= srcStart && !counted[i]) {
+            let newStart = srcStart > start ? srcStart : start;
+            let newEnd = srcEnd < end ? srcEnd : end;
+            let newRange = [dest - srcStart + newStart, dest - srcEnd + newEnd];
+            result.push(newRange);
             counted[i] = 1;
         } else {
             result.push(currMaps[i]);
         }
+
+        // if (src <= currMaps[i] && currMaps[i] <= src + len - 1 && !counted[i]) {
+        //     result.push(dest + currMaps[i] - src);
+        //     counted[i] = 1;
+        // } else {
+        //     result.push(currMaps[i]);
+        // }
     }
 
     return result;
@@ -199,19 +210,19 @@ const findMap2 = (ranges, currMaps, counted) => {
 
 const findLowestLocation2 = (almanac) => {
     let result = almanac[0].split(': ')[1].split(' ').map(e => Number(e));
-    result = getSeeds(result);
+    result = getSeedRanges(result);
     let counted = {};
 
     for (let i = 2; i < almanac.length; i++) {
         if (/[0-9]/.test(almanac[i][0])) {
-            const ranges = almanac[i].split(' ');
-            result = findMap(ranges, result, counted);
+            const range = almanac[i].split(' ');
+            result = findMap2(range, result, counted);
         } else {
             counted = [];
         }
     }
 
-    return Math.min(...result);
+    return result;
 }
 
-// console.log(findLowestLocation2(input)); //
+console.log(findLowestLocation2(test)); //
