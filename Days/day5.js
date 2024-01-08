@@ -168,7 +168,7 @@ const getSeedRanges = (seeds) => {
     return seedRanges;
 }
 
-console.log(getSeedRanges([79, 14, 55, 13]))
+// console.log(getSeedRanges([79, 14, 55, 13]))
 
 const findMap2 = (range, currMaps, counted) => {
     let result = [];
@@ -186,9 +186,11 @@ const findMap2 = (range, currMaps, counted) => {
         const [srcStart, srcEnd] = [src, src + len - 1];
 
         if (end >= srcStart && !counted[i]) {
+            // these arent being evaluated correctly
             let newStart = srcStart > start ? srcStart : start;
             let newEnd = srcEnd < end ? srcEnd : end;
-            let newRange = [dest - srcStart + newStart, dest - srcEnd + newEnd];
+            let newRange = [dest - srcStart + newStart, dest + len - 1 - srcEnd + newEnd];
+            console.log({newStart, newEnd, srcStart, srcEnd, dest, newRange});
             result.push(newRange);
             counted[i] = 1;
         } else {
