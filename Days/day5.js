@@ -184,13 +184,14 @@ const findMap2 = (range, currMaps, counted) => {
         */
         const [start, end] = currMaps[i];
         const [srcStart, srcEnd] = [src, src + len - 1];
+        const [destStart, destEnd] = [dest, dest + len - 1];
 
-        if (end >= srcStart && !counted[i]) {
-            // these arent being evaluated correctly
+        if (start >= srcStart && end <= srcEnd && !counted[i]) {
             let newStart = srcStart > start ? srcStart : start;
             let newEnd = srcEnd < end ? srcEnd : end;
-            let newRange = [dest - srcStart + newStart, dest + len - 1 - srcEnd + newEnd];
-            console.log({newStart, newEnd, srcStart, srcEnd, dest, newRange});
+            let newRange = [destStart - srcStart + newStart, destEnd - srcEnd + newEnd];
+            // console.log({newStart, newEnd, srcStart, srcEnd, dest, newRange});
+            // Somethings going on when converting to temp?
             result.push(newRange);
             counted[i] = 1;
         } else {
@@ -219,7 +220,9 @@ const findLowestLocation2 = (almanac) => {
         if (/[0-9]/.test(almanac[i][0])) {
             const range = almanac[i].split(' ');
             result = findMap2(range, result, counted);
+
         } else {
+            console.log(result);
             counted = [];
         }
     }
