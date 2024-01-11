@@ -192,6 +192,7 @@ const findMap2 = (range, currMaps, counted) => {
             let newRange = [destStart - srcStart + newStart, destEnd - srcEnd + newEnd];
             // console.log({newStart, newEnd, srcStart, srcEnd, dest, newRange});
             // Somethings going on when converting to temp?
+            // might be before temp in light?
             result.push(newRange);
             counted[i] = 1;
         } else {
