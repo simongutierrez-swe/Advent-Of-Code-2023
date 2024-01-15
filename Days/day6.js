@@ -52,6 +52,7 @@ const input = fs.readFileSync(path.resolve('../Inputs/', 'input6.txt'), 'utf8').
 
 const test = 'Time:      7  15   30\nDistance:  9  40  200'.split('\n').filter(e => e !== '')
                                                                         .map(e => [...e.matchAll(/\d+/g)]);
+                                                                        // console.log(...test);
 
 const findFastestRecords = (records) => {
     // if currTime - total time * curTime > Dist then count++
@@ -72,4 +73,39 @@ const findFastestRecords = (records) => {
     return result;
 }
 
-console.log(findFastestRecords(input))
+// console.log(findFastestRecords(input)) // 440000
+
+
+/*
+--- Part Two ---
+As the race is about to start, you realize the piece of paper with race times and record distances you got earlier actually just has very bad kerning. There's really only one race - ignore the spaces between the numbers on each line.
+
+So, the example from before:
+
+Time:      7  15   30
+Distance:  9  40  200
+...now instead means this:
+
+Time:      71530
+Distance:  940200
+Now, you have to figure out how many ways there are to win this single race. In this example, the race lasts for 71530 milliseconds and the record distance you need to beat is 940200 millimeters. You could hold the button anywhere from 14 to 71516 milliseconds and beat the record, a total of 71503 ways!
+
+How many ways can you beat the record in this one much longer race?
+*/
+
+const findFastestRecords2 = (records) => {
+    // if currTime - total time * curTime > Dist then count++
+    const [time, dist] = records;
+    const totaltime = Number(time.reduce((total, e) => total + e[0], ''));
+    const totalDist = Number(dist.reduce((total, e) => total + e[0], ''));
+
+    let total = 0;
+
+    for (let i = 1; i < totaltime; i++) {
+        if ((totaltime - i) * i > totalDist) total++;
+    }
+
+    return total;
+}
+
+console.log(findFastestRecords2(input)) // 26187338
