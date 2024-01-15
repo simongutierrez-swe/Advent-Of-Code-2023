@@ -52,9 +52,24 @@ const input = fs.readFileSync(path.resolve('../Inputs/', 'input6.txt'), 'utf8').
 
 const test = 'Time:      7  15   30\nDistance:  9  40  200'.split('\n').filter(e => e !== '')
                                                                         .map(e => [...e.matchAll(/\d+/g)]);
-console.log(...test);
 
 const findFastestRecords = (records) => {
     // if currTime - total time * curTime > Dist then count++
+    const [time, dist] = records;
+    let result = 1;
 
+    for (let i = 0; i < time.length; i++) {
+        const currTime = Number(time[i][0]);
+        const currRecord = Number(dist[i][0]);
+        let total = 0;
+
+        for (let k = 1; k < currTime; k++) {
+            if ((currTime - k) * k > currRecord) total++;
+        }
+        result *= total;
+    }
+
+    return result;
 }
+
+console.log(findFastestRecords(input))
