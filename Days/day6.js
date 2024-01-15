@@ -101,9 +101,7 @@ const findFastestRecords2 = (records) => {
 
     let total = 0;
 
-    for (let i = 1; i < totaltime; i++) {
-        if ((totaltime - i) * i > totalDist) total++;
-    }
+    for (let i = 1; i < totaltime; i++) if ((totaltime - i) * i > totalDist) total++;
 
     return total;
 }
