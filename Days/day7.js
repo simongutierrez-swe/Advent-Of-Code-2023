@@ -52,3 +52,44 @@ Now, you can determine the total winnings of this set of hands by adding up the 
 Find the rank of every hand in your set. What are the total winnings?
 */
 
+// create your own sort function (ascending order), then map each el to e = e * index, then reduce to the sum of all elems
+
+const fs = require('fs');
+const path = require('path');
+const input = fs.readFileSync(path.resolve('../Inputs/', 'input7.txt'), 'utf8').split('\n').map(e => e.split(' '));
+const test = '32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483'.split('\n').map(e => e.split(' '));
+
+// give each card a weight
+// can we do the same for combos?
+const cardBank = {
+    A: 13,
+    K: 12,
+    Q: 11,
+    J: 10,
+    T: 9,
+    9: 8,
+    8: 7,
+    7: 6,
+    6: 5,
+    5: 4,
+    4: 3,
+    3: 2,
+    2: 1,
+}
+
+const findBetterHand = (hadn1, hand2) => {
+    // find which ones better
+    // resutn that hand
+}
+
+const findTotalWinnings = (cards) => {
+    // cards.sort((hand1, hand2) {
+    //     findBetterHand(hand1, hand2) === hand1 return 1 [hand2, hand1]
+    //     findBetterHand(hand1, hand2) === hand2 return -1 [hand1, hand2]
+    //     hand1 === hand2 return 0 [Keep original order];
+    // });
+
+    return cards;
+}
+
+console.log(cardBank)
