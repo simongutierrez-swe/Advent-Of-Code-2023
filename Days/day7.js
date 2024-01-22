@@ -57,8 +57,9 @@ Find the rank of every hand in your set. What are the total winnings?
 
 const fs = require('fs');
 const path = require('path');
-const input = fs.readFileSync(path.resolve('../Inputs/', 'input7.txt'), 'utf8').split('\n').map(e => e.split(' '));
-const test = '32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483'.split('\n').map(e => e.split(' '));
+const input = fs.readFileSync(path.resolve('../Inputs/', 'input7.txt'), 'utf8').split('\n').filter(e => e !== '')
+.map(e => e.split(' '));
+const test = '32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483'.split('\n').filter(e => e !== '').map(e => e.split(' '));
 
 // give each card a weight
 const cardBank = {
@@ -146,9 +147,9 @@ const findTotalWinnings = (cards) => {
         } else {
             return 0;
         }
-    }).reduce((sum, elem, idx) => sum + (Number(elem[1]) * (idx + 1)), 0);
+    }).reduce((sum, elem, idx) => {
+        return sum + (Number(elem[1]) * (idx + 1));
+    }, 0);
+    }
 
-    // return cards
-}
-
-console.log(findTotalWinnings(input)) // keep getting NaN, find out why, debut reduce and work your way up
+console.log(findTotalWinnings(input)) // 251106089
