@@ -60,7 +60,6 @@ const input = fs.readFileSync(path.resolve('../Inputs/', 'input7.txt'), 'utf8').
 const test = '32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483'.split('\n').map(e => e.split(' '));
 
 // give each card a weight
-// can we do the same for combos?
 const cardBank = {
     A: 13,
     K: 12,
@@ -77,19 +76,42 @@ const cardBank = {
     2: 1,
 }
 
+const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'four of a kind', 'five of a kind'];
+
+// now make a function that maps a hand to a combo and return its idx in combos, this will be its weight;
+// Create a function that will compare hands that map to the same combo;
+const mapHandToCombo = (hand) => {
+    let counts = {};
+
+    for (let i = 0; i < hand.length; i++) {
+        counts[hand[i]] ? counts[hand[i]]++ : counts[hand[i]] = 1;
+    }
+    let vals = Object.values(counts);
+    const max = Math.max(...Object.values(counts));
+
+    if (vals.length === 2 && max !== 4) {
+        return 'full house';
+    } else {
+        return combos[max];
+    }
+}
+
+console.log(mapHandToCombo('78888'));
+
+
+// compare the two hands following the rules described above and return that hand
 const findBetterHand = (hadn1, hand2) => {
-    // find which ones better
-    // resutn that hand
+
 }
 
 const findTotalWinnings = (cards) => {
-    // cards.sort((hand1, hand2) {
-    //     findBetterHand(hand1, hand2) === hand1 return 1 [hand2, hand1]
+    // cards.sort((hand1, hand2) { // this needs to be sorted in ascending order
+    //     if(findBetterHand(hand1, hand2) === hand1) return 1 [hand2, hand1]
     //     findBetterHand(hand1, hand2) === hand2 return -1 [hand1, hand2]
     //     hand1 === hand2 return 0 [Keep original order];
-    // });
+    // }).reduce(add up all of the values - formula sum += elem * index);
 
     return cards;
 }
 
-console.log(cardBank)
+// console.log(cardBank)
