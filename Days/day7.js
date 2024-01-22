@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /*
 --- Day 7: Camel Cards ---
 Your all-expenses-paid trip turns out to be a one-way, five-minute ride in an airship. (At least it's a cool airship!) It drops you off at the edge of a vast desert and descends back to Island Island.
@@ -76,7 +77,7 @@ const cardBank = {
     2: 1,
 }
 
-const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'four of a kind', 'five of a kind'];
+const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'full house', 'four of a kind', 'five of a kind'];
 
 // now make a function that maps a hand to a combo and return its idx in combos, this will be its weight;
 // Create a function that will compare hands that map to the same combo;
@@ -89,14 +90,18 @@ const mapHandToCombo = (hand) => {
     let vals = Object.values(counts);
     const max = Math.max(...Object.values(counts));
 
-    if (vals.length === 2 && max !== 4) {
-        return 'full house';
+    if (vals.length === 1) {
+        return combos.length - 1;
+    } else if (vals.length === 2) {
+        return max === 4 ? combos.length - 2 : combos.length - 3;
+    } else if (vals.length === 3) {
+        return max === 3 ? combos.length - 4 : combos.length - 5;
     } else {
-        return combos[max];
+        return max === 2 ? combos.length - 6 : combos.length - 7;
     }
 }
 
-console.log(mapHandToCombo('78888'));
+console.log(mapHandToCombo('787FT'));
 
 
 // compare the two hands following the rules described above and return that hand
