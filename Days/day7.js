@@ -80,7 +80,6 @@ const cardBank = {
 const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'full house', 'four of a kind', 'five of a kind'];
 
 // now make a function that maps a hand to a combo and return its idx in combos, this will be its weight;
-// Create a function that will compare hands that map to the same combo;
 const mapHandToCombo = (hand) => {
     let counts = {};
 
@@ -101,13 +100,36 @@ const mapHandToCombo = (hand) => {
     }
 }
 
-console.log(mapHandToCombo('787FT'));
+// console.log(mapHandToCombo('76891')); // 0
 
+// Create a function that will compare hands that map to the same combo;
+const compareSameHand = (hand1, hand2) => {
+    if (hand1 === hand2) return 'both are equal';
+
+    for (let i = 0; i < hand1.length; i++) {
+        if (cardBank[hand1[i]] > cardBank[hand2[i]]) {
+            return hand1;
+        } else if (cardBank[hand1[i]] < cardBank[hand2[i]]) {
+            return hand2;
+        }
+    }
+}
+
+// console.log(compareSameHand('KK677', 'KTJJT')) // KK677
 
 // compare the two hands following the rules described above and return that hand
-const findBetterHand = (hadn1, hand2) => {
+const findBetterHand = (hand1, hand2) => {
+    const combo1 = mapHandToCombo(hand1);
+    const combo2 = mapHandToCombo(hand2);
 
+    if (combo1 === combo2) {
+        return compareSameHand(hand1, hand2);
+    }
+
+    return combo1 > combo2 ? hand1 : hand2;
 }
+
+// console.log(findBetterHand('KK677', 'KTJJT')) // KK677
 
 const findTotalWinnings = (cards) => {
     // cards.sort((hand1, hand2) { // this needs to be sorted in ascending order
@@ -116,7 +138,17 @@ const findTotalWinnings = (cards) => {
     //     hand1 === hand2 return 0 [Keep original order];
     // }).reduce(add up all of the values - formula sum += elem * index);
 
-    return cards;
+    return cards.sort((hand1, hand2) => {
+        if (findBetterHand(hand1[0], hand2[0]) === hand1[0]) {
+            return 1 // [hand2, hand1]
+        } else if (findBetterHand(hand1[0], hand2[0]) === hand2[0]) {
+            return -1 // [hand1, hand2]
+        } else {
+            return 0;
+        }
+    }).reduce((sum, elem, idx) => sum + (Number(elem[1]) * (idx + 1)), 0);
+
+    // return cards
 }
 
-// console.log(cardBank)
+console.log(findTotalWinnings(input)) // keep getting NaN, find out why, debut reduce and work your way up
