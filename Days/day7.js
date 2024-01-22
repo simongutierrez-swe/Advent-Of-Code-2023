@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /*
 --- Day 7: Camel Cards ---
 Your all-expenses-paid trip turns out to be a one-way, five-minute ride in an airship. (At least it's a cool airship!) It drops you off at the edge of a vast desert and descends back to Island Island.
@@ -76,10 +77,9 @@ const cardBank = {
     2: 1,
 }
 
-const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'four of a kind', 'five of a kind'];
+const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'full house', 'four of a kind', 'five of a kind'];
 
 // now make a function that maps a hand to a combo and return its idx in combos, this will be its weight;
-// Create a function that will compare hands that map to the same combo;
 const mapHandToCombo = (hand) => {
     let counts = {};
 
@@ -89,20 +89,47 @@ const mapHandToCombo = (hand) => {
     let vals = Object.values(counts);
     const max = Math.max(...Object.values(counts));
 
-    if (vals.length === 2 && max !== 4) {
-        return 'full house';
+    if (vals.length === 1) {
+        return combos.length - 1;
+    } else if (vals.length === 2) {
+        return max === 4 ? combos.length - 2 : combos.length - 3;
+    } else if (vals.length === 3) {
+        return max === 3 ? combos.length - 4 : combos.length - 5;
     } else {
-        return combos[max];
+        return max === 2 ? combos.length - 6 : combos.length - 7;
     }
 }
 
-console.log(mapHandToCombo('78888'));
+// console.log(mapHandToCombo('76891')); // 0
 
+// Create a function that will compare hands that map to the same combo;
+const compareSameHand = (hand1, hand2) => {
+    if (hand1 === hand2) return 'both are equal';
+
+    for (let i = 0; i < hand1.length; i++) {
+        if (cardBank[hand1[i]] > cardBank[hand2[i]]) {
+            return hand1;
+        } else if (cardBank[hand1[i]] < cardBank[hand2[i]]) {
+            return hand2;
+        }
+    }
+}
+
+// console.log(compareSameHand('KK677', 'KTJJT')) // KK677
 
 // compare the two hands following the rules described above and return that hand
-const findBetterHand = (hadn1, hand2) => {
+const findBetterHand = (hand1, hand2) => {
+    const combo1 = mapHandToCombo(hand1);
+    const combo2 = mapHandToCombo(hand2);
 
+    if (combo1 === combo2) {
+        return compareSameHand(hand1, hand2);
+    }
+
+    return combo1 > combo2 ? hand1 : hand2;
 }
+
+// console.log(findBetterHand('KK677', 'KTJJT')) // KK677
 
 const findTotalWinnings = (cards) => {
     // cards.sort((hand1, hand2) { // this needs to be sorted in ascending order
@@ -111,7 +138,17 @@ const findTotalWinnings = (cards) => {
     //     hand1 === hand2 return 0 [Keep original order];
     // }).reduce(add up all of the values - formula sum += elem * index);
 
-    return cards;
+    return cards.sort((hand1, hand2) => {
+        if (findBetterHand(hand1[0], hand2[0]) === hand1[0]) {
+            return 1 // [hand2, hand1]
+        } else if (findBetterHand(hand1[0], hand2[0]) === hand2[0]) {
+            return -1 // [hand1, hand2]
+        } else {
+            return 0;
+        }
+    }).reduce((sum, elem, idx) => sum + (Number(elem[1]) * (idx + 1)), 0);
+
+    // return cards
 }
 
-// console.log(cardBank)
+console.log(findTotalWinnings(input)) // keep getting NaN, find out why, debut reduce and work your way up
