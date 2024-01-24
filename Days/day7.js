@@ -61,7 +61,7 @@ const input = fs.readFileSync(path.resolve('../Inputs/', 'input7.txt'), 'utf8').
 .map(e => e.split(' '));
 const test = '32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483'.split('\n').filter(e => e !== '').map(e => e.split(' '));
 
-// give each card a weight
+// give each card a weight for comparing
 const cardBank = {
     A: 13,
     K: 12,
@@ -84,11 +84,9 @@ const combos = ['high card', 'one pair', 'two pair', 'three of a kind', 'full ho
 const mapHandToCombo = (hand) => {
     let counts = {};
 
-    for (let i = 0; i < hand.length; i++) {
-        counts[hand[i]] ? counts[hand[i]]++ : counts[hand[i]] = 1;
-    }
-    let vals = Object.values(counts);
-    const max = Math.max(...Object.values(counts));
+    for (let i = 0; i < hand.length; i++) counts[hand[i]] ? counts[hand[i]]++ : counts[hand[i]] = 1;
+
+    const vals = Object.values(counts), max = Math.max(...Object.values(counts));
 
     if (vals.length === 1) {
         return combos.length - 1;
@@ -103,7 +101,7 @@ const mapHandToCombo = (hand) => {
 
 // console.log(mapHandToCombo('76891')); // 0
 
-// Create a function that will compare hands that map to the same combo;
+// Create a function that will compare hands that map to the same combo to see which one is greater;
 const compareSameHand = (hand1, hand2) => {
     if (hand1 === hand2) return 'both are equal';
 
@@ -133,21 +131,17 @@ const findBetterHand = (hand1, hand2) => {
 // console.log(findBetterHand('KK677', 'KTJJT')) // KK677
 
 const findTotalWinnings = (cards) => {
-    // cards.sort((hand1, hand2) { // this needs to be sorted in ascending order
-    //     if(findBetterHand(hand1, hand2) === hand1) return 1 [hand2, hand1]
-    //     findBetterHand(hand1, hand2) === hand2 return -1 [hand1, hand2]
-    //     hand1 === hand2 return 0 [Keep original order];
-    // }).reduce(add up all of the values - formula sum += elem * index);
-
+    // sorted in ascending order
     return cards.sort((hand1, hand2) => {
         if (findBetterHand(hand1[0], hand2[0]) === hand1[0]) {
             return 1 // [hand2, hand1]
         } else if (findBetterHand(hand1[0], hand2[0]) === hand2[0]) {
             return -1 // [hand1, hand2]
         } else {
-            return 0;
+            return 0; // keep the same pos
         }
     }).reduce((sum, elem, idx) => {
+        // add upp all of the vals of each hand, * by idx bc thats its weight
         return sum + (Number(elem[1]) * (idx + 1));
     }, 0);
     }
