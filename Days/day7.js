@@ -171,3 +171,5 @@ With the new joker rule, the total winnings in this example are 5905.
 
 Using the new joker rule, find the rank of every hand in your set. What are the new total winnings?
  */
+
+// still working on this
